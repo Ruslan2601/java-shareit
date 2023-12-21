@@ -4,13 +4,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 import ru.practicum.shareit.user.dto.UserCreate;
+import ru.practicum.shareit.user.dto.UserResponse;
 import ru.practicum.shareit.user.dto.UserUpdate;
 import ru.practicum.shareit.user.mapper.UserMapper;
-import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserStorage;
 import ru.practicum.shareit.user.util.UserValidation;
 
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -19,25 +20,25 @@ public class UserService {
     private final UserStorage userStorage;
     private final UserMapper mapper;
 
-    public User addUser(UserCreate user, BindingResult bindingResult) {
+    public UserResponse addUser(UserCreate user, BindingResult bindingResult) {
         UserValidation.validation(bindingResult);
-        return userStorage.addUser(mapper.toUser(user));
+        return mapper.toUserResponse(userStorage.addUser(mapper.toUser(user)));
     }
 
-    public User updateUser(UserUpdate user, Integer userId, BindingResult bindingResult) {
+    public UserResponse updateUser(UserUpdate user, Integer userId, BindingResult bindingResult) {
         UserValidation.validation(bindingResult);
-        return userStorage.updateUser(mapper.toUser(user), userId);
+        return mapper.toUserResponse(userStorage.updateUser(mapper.toUser(user), userId));
     }
 
-    public User getUser(Integer userId) {
-        return userStorage.getUser(userId);
+    public UserResponse getUser(Integer userId) {
+        return mapper.toUserResponse(userStorage.getUser(userId));
     }
 
-    public User deleteUser(Integer userId) {
-        return userStorage.deleteUser(userId);
+    public UserResponse deleteUser(Integer userId) {
+        return mapper.toUserResponse(userStorage.deleteUser(userId));
     }
 
-    public Collection<User> getAllUsers() {
-        return userStorage.getAllUsers();
+    public Collection<UserResponse> getAllUsers() {
+        return userStorage.getAllUsers().stream().map(mapper::toUserResponse).collect(Collectors.toList());
     }
 }

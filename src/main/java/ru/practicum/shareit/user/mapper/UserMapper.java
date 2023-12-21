@@ -2,6 +2,7 @@ package ru.practicum.shareit.user.mapper;
 
 import org.mapstruct.Mapper;
 import ru.practicum.shareit.user.dto.UserCreate;
+import ru.practicum.shareit.user.dto.UserResponse;
 import ru.practicum.shareit.user.dto.UserUpdate;
 import ru.practicum.shareit.user.model.User;
 
@@ -15,4 +16,8 @@ public interface UserMapper {
     User toUser(UserUpdate userCreate);
 
     UserCreate toUserUpdate(User user);
+
+    User toUser(UserResponse userResponse);
+
+    UserResponse toUserResponse(User user);
 }
