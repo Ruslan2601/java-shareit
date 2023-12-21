@@ -4,6 +4,7 @@ package ru.practicum.shareit.item.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NonNull;
+import ru.practicum.shareit.item.util.NotNull;
 import ru.practicum.shareit.user.model.User;
 
 import javax.validation.constraints.NotBlank;
@@ -20,8 +21,6 @@ public class ItemDto {
     @NotBlank(message = "поле description не может быть пустым")
     private String description;
 
-    @NonNull
+    @NotNull
     private Boolean available;
-
-    private User owner;
 }

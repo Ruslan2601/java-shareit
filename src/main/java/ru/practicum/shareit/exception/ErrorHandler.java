@@ -41,4 +41,14 @@ public class ErrorHandler {
                 Instant.now().toString()
         );
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleConflictException(Exception e) {
+        log.debug("Получен статус 500 Internal server error {}", e.getMessage(), e);
+        return new ErrorResponse(
+                e.getMessage(),
+                Instant.now().toString()
+        );
+    }
 }

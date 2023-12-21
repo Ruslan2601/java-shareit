@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.exception.ObjectNotFoundException;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.model.User;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -16,8 +17,9 @@ public class InMemoryItemStorage implements ItemStorage {
     private int id = 0;
 
     @Override
-    public Item addItem(Item item, Integer userId) {
+    public Item addItem(Item item, User user) {
         item.setId(++id);
+        item.setOwner(user);
         itemMap.put(item.getId(), item);
         log.info("Добавлен товар");
         return item;
