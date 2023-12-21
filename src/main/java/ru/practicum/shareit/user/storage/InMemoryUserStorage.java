@@ -72,7 +72,7 @@ public class InMemoryUserStorage implements UserStorage {
     private void checkEmail(User user, Integer userId) {
         if (userMap.values().stream().filter(x -> x.getId() != userId)
                 .anyMatch(x -> x.getEmail().equals(user.getEmail()))) {
-            throw new ConflictException("два пользователя не могут " +
+            throw new ConflictException("Два пользователя не могут " +
                     "иметь одинаковый адрес электронной почты");
         }
     }
