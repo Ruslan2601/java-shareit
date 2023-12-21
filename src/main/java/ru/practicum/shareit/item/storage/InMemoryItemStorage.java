@@ -65,7 +65,7 @@ public class InMemoryItemStorage implements ItemStorage {
     public Collection<Item> search(String text) {
         log.info("Вывод результатов поиска");
         if (text.isEmpty()) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         }
         return itemMap.values().stream()
                 .filter(x -> x.getName().toLowerCase(Locale.ROOT).contains(text.toLowerCase(Locale.ROOT))
