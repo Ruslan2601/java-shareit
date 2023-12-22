@@ -1,11 +1,13 @@
-package ru.practicum.shareit.item.model;
+package ru.practicum.shareit.item.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import ru.practicum.shareit.request.ItemRequest;
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.dto.UserCreate;
 
 @Data
-public class Item {
+@AllArgsConstructor
+public class ItemResponse {
 
     private int id;
 
@@ -15,7 +17,7 @@ public class Item {
 
     private Boolean available;
 
-    private User owner;
+    private UserCreate owner;
 
     private ItemRequest request;
 }
