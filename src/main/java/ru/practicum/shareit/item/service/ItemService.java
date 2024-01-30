@@ -5,19 +5,26 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
+import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.repository.BookingRepository;
+import ru.practicum.shareit.enums.Status;
 import ru.practicum.shareit.exception.ObjectNotFoundException;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.ItemResponse;
-import ru.practicum.shareit.item.dto.ItemUpdate;
+import ru.practicum.shareit.exception.ValidationException;
+import ru.practicum.shareit.item.dto.*;
+import ru.practicum.shareit.item.mapper.CommentMapper;
 import ru.practicum.shareit.item.mapper.ItemMapper;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.item.util.ItemValidation;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
@@ -28,8 +35,11 @@ import java.util.stream.Collectors;
 public class ItemService {
 
     private final ItemMapper mapper;
+    private final CommentMapper commentMapper;
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
+    private final BookingRepository bookingRepository;
 
     @Transactional
     public ItemResponse addItem(Integer userId, ItemDto itemDto, BindingResult bindingResult) {
@@ -43,7 +53,7 @@ public class ItemService {
 
     @Transactional
     public ItemResponse updateItem(Integer userId, Integer itemId, ItemUpdate itemUpdate) {
-        Item thisItem = mapper.toItem(getItem(itemId));
+        Item thisItem = mapper.toItem(getItem(itemId, userId));
         if (thisItem.getOwner().getId() == userId) {
             if (itemUpdate.getName() != null) {
                 thisItem.setName(itemUpdate.getName());
@@ -62,15 +72,22 @@ public class ItemService {
         }
     }
 
-    public ItemResponse getItem(Integer itemId) {
+    public ItemResponse getItem(Integer itemId, Integer userId) {
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new ObjectNotFoundException("Товара с такими id нет"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new ObjectNotFoundException("Пользователя с такими id нет"));
+        ItemResponse itemResponse = mapper.toItemResponse(item);
+        if (user.getId() == item.getOwner().getId()) {
+            addLastAndNextBooking(itemResponse, userId);
+        }
+        List<Comment> commentList = commentRepository.findByItemId(itemId);
+        itemResponse.setComments(commentList.stream().map(commentMapper::toCommentResponse).collect(Collectors.toList()));
         log.info("Отображен товар с id = {}", itemId);
-        return mapper.toItemResponse(item);
+        return itemResponse;
     }
 
     public Collection<ItemResponse> getAllItems(Integer userId) {
         log.info("Отображен список всех товаров пользователя");
-        return itemRepository.findByOwnerId(userId).stream().map(mapper::toItemResponse).collect(Collectors.toList());
+        return itemRepository.findByOwnerId(userId).stream().map(x -> getItem(x.getId(), userId)).collect(Collectors.toList());
     }
 
     public Collection<ItemResponse> search(String text) {
@@ -85,5 +102,48 @@ public class ItemService {
                 .filter(Item::getAvailable)
                 .map(mapper::toItemResponse)
                 .collect(Collectors.toList());
+    }
+
+    public CommentResponse addComment(Integer userId, CommentDto commentDto, Integer itemId) {
+        if (commentDto.getText().isBlank() || commentDto.getText() == null) {
+            throw new ValidationException("поле comment не может быть пустым");
+        }
+        Item item = itemRepository.findById(itemId).orElseThrow(() -> new ObjectNotFoundException("Товара с такими id нет"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new ObjectNotFoundException("Пользователя с такими id нет"));
+        bookingRepository.findFirstByBookerIdAndItemIdAndEndBefore(userId, itemId, LocalDateTime.now())
+                .orElseThrow(() -> new ValidationException("User с заданным id = " + userId + " ещё не брал в аренду этот предмет"));
+        if (item.getOwner().getId() == userId) {
+            throw new ValidationException("User с заданным id = " + userId + " является владельцем");
+        }
+        Comment comment = new Comment();
+        comment.setItem(item);
+        comment.setAuthor(user);
+        comment.setText(commentDto.getText());
+        comment.setCreated(LocalDateTime.now());
+        commentRepository.save(comment);
+        log.info("Отзыв добавлен");
+        return new CommentResponse(comment.getId(), comment.getText(), comment.getAuthor().getName(), comment.getCreated());
+    }
+
+    private void addLastAndNextBooking(ItemResponse item, Integer ownerId) {
+        Booking lastBooking = bookingRepository
+                .findFirstByItemIdAndItemOwnerIdAndStartBeforeAndStatusOrderByStartDesc(
+                        item.getId(),
+                        ownerId,
+                        LocalDateTime.now(),
+                        Status.APPROVED);
+        Booking nextBooking = bookingRepository
+                .findFirstByItemIdAndItemOwnerIdAndStartAfterAndStatusOrderByStartAsc(
+                        item.getId(),
+                        ownerId,
+                        LocalDateTime.now(),
+                        Status.APPROVED);
+
+        if (lastBooking != null) {
+            item.setLastBooking(new ItemBooking(lastBooking.getId(), lastBooking.getBooker().getId()));
+        }
+        if (nextBooking != null) {
+            item.setNextBooking(new ItemBooking(nextBooking.getId(), nextBooking.getBooker().getId()));
+        }
     }
 }
