@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.dto.UserCreate;
 
@@ -25,7 +26,7 @@ public class ItemResponse {
 
     private ItemBooking nextBooking;
 
-    private ItemRequest request;
+    private int requestId;
 
     private List<CommentResponse> comments;
 }
