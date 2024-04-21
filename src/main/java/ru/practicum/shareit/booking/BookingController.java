@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingResponse;
 import ru.practicum.shareit.booking.service.BookingService;
-import ru.practicum.shareit.enums.State;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -47,7 +46,7 @@ public class BookingController {
 
     @GetMapping
     public List<BookingResponse> getBookingList(@RequestHeader("X-Sharer-User-Id") Integer userId,
-                                                @RequestParam(defaultValue = "ALL") State state,
+                                                @RequestParam(defaultValue = "ALL") String state,
                                                 @RequestParam(defaultValue = "0")
                                                 @Min(value = 0, message = "from должно быть больше или равно 0") int from,
                                                 @RequestParam(defaultValue = "10")
@@ -58,7 +57,7 @@ public class BookingController {
 
     @GetMapping("/owner")
     public List<BookingResponse> getBookingListByItemOwner(@RequestHeader("X-Sharer-User-Id") Integer userId,
-                                                           @RequestParam(defaultValue = "ALL") State state,
+                                                           @RequestParam(defaultValue = "ALL") String state,
                                                            @RequestParam(defaultValue = "0")
                                                            @Min(value = 0, message = "from должно быть больше или равно 0") int from,
                                                            @RequestParam(defaultValue = "10")

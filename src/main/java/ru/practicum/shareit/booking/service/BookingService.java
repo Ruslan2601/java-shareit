@@ -94,11 +94,11 @@ public class BookingService {
         return mapper.toBookingResponse(booking);
     }
 
-    public List<BookingResponse> getBookingList(Integer userId, State state, int from, int size) {
+    public List<BookingResponse> getBookingList(Integer userId, String state, int from, int size) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ObjectNotFoundException("Пользователя с такими id нет"));
         Pageable sortedByStart = PageRequest.of(from / size, size, Sort.by("start").descending());
         List<Booking> bookingList;
-        switch (state) {
+        switch (State.valueOf(state)) {
             case ALL:
                 bookingList = bookingRepository.findAllByBookerIdOrderByStartDesc(userId, sortedByStart);
                 break;
@@ -124,11 +124,11 @@ public class BookingService {
         return bookingList.stream().map(mapper::toBookingResponse).collect(Collectors.toList());
     }
 
-    public List<BookingResponse> getBookingListByItemOwner(Integer userId, State state, int from, int size) {
+    public List<BookingResponse> getBookingListByItemOwner(Integer userId, String state, int from, int size) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ObjectNotFoundException("Пользователя с такими id нет"));
         List<Booking> bookingList;
         Pageable sortedByStart = PageRequest.of(from / size, size, Sort.by("start").descending());
-        switch (state) {
+        switch (State.valueOf(state)) {
             case ALL:
                 bookingList = bookingRepository.findAllByItemOwnerOrderByStartDesc(user, sortedByStart);
                 break;

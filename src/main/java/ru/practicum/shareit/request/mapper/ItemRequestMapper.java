@@ -10,5 +10,5 @@ public interface ItemRequestMapper {
 
     ItemRequestResponse toItemRequestResponse(ItemRequest itemRequest);
 
-    ItemRequest toItemRequest(ItemRequestRequest ItemRequestRequest);
+    ItemRequest toItemRequest(ItemRequestRequest itemRequestRequest);
 }
