@@ -7,13 +7,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BindingResult;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingResponse;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
-import ru.practicum.shareit.booking.util.BookingValidation;
 import ru.practicum.shareit.enums.State;
 import ru.practicum.shareit.enums.Status;
 import ru.practicum.shareit.exception.ObjectNotFoundException;
@@ -40,8 +38,7 @@ public class BookingService {
 
 
     @Transactional
-    public BookingResponse addBooking(Integer userId, BookingDto bookingDto, BindingResult bindingResult) {
-        BookingValidation.validation(bindingResult);
+    public BookingResponse addBooking(Integer userId, BookingDto bookingDto) {
         Item item = itemRepository.findById(bookingDto.getItemId()).orElseThrow(() -> new ObjectNotFoundException("Товара с такими id нет"));
         if (!item.getAvailable()) {
             throw new ValidationException("Товар недоступен для бронирования");
@@ -70,7 +67,7 @@ public class BookingService {
     public BookingResponse updateStatus(Integer userId, Integer bookingId, String approved) {
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new ObjectNotFoundException("Брони с такими id нет"));
         if (booking.getItem().getOwner().getId() != userId) {
-            throw new ObjectNotFoundException("Товар не приндалежит данному пользователю");
+            throw new ObjectNotFoundException("Товар не принадлежит данному пользователю");
         }
         if (booking.getStatus().equals(Status.APPROVED)) {
             throw new ValidationException("Бронь товара уже согласована");

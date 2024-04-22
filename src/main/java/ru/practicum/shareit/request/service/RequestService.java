@@ -7,7 +7,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BindingResult;
 import ru.practicum.shareit.exception.ObjectNotFoundException;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.repository.ItemRepository;
@@ -16,7 +15,6 @@ import ru.practicum.shareit.request.dto.ItemRequestResponse;
 import ru.practicum.shareit.request.mapper.ItemRequestMapper;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.repository.RequestRepository;
-import ru.practicum.shareit.request.util.ItemRequestValidation;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -37,8 +35,7 @@ public class RequestService {
     private final ItemMapper itemMapper;
 
     @Transactional
-    public ItemRequestResponse addRequest(int userId, ItemRequestRequest itemRequestRequest, BindingResult bindingResult) {
-        ItemRequestValidation.validation(bindingResult);
+    public ItemRequestResponse addRequest(int userId, ItemRequestRequest itemRequestRequest) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ObjectNotFoundException("Пользователя с такими id нет"));
         ItemRequest itemRequest = mapper.toItemRequest(itemRequestRequest);
         itemRequest.setCreated(LocalDateTime.now());

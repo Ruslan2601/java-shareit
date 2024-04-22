@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BindingResult;
 import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.exception.ObjectNotFoundException;
 import ru.practicum.shareit.user.dto.UserCreate;
@@ -14,7 +13,6 @@ import ru.practicum.shareit.user.dto.UserUpdate;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
-import ru.practicum.shareit.user.util.UserValidation;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -29,8 +27,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Transactional
-    public UserResponse addUser(UserCreate user, BindingResult bindingResult) {
-        UserValidation.validation(bindingResult);
+    public UserResponse addUser(UserCreate user) {
         try {
             User user1 = userRepository.save(mapper.toUser(user));
             log.info("Добавлен пользователь");
@@ -42,9 +39,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponse updateUser(UserUpdate user, Integer userId, BindingResult bindingResult) {
-        UserValidation.validation(bindingResult);
-
+    public UserResponse updateUser(UserUpdate user, Integer userId) {
         User thisUser = mapper.toUser(getUser(userId));
         if (user.getEmail() != null) {
             checkEmail(user.getEmail(), userId);

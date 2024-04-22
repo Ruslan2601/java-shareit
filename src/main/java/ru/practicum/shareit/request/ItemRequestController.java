@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.ItemRequestRequest;
 import ru.practicum.shareit.request.dto.ItemRequestResponse;
 import ru.practicum.shareit.request.service.RequestService;
+import ru.practicum.shareit.util.Validation;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -26,7 +27,8 @@ public class ItemRequestController {
     public ItemRequestResponse addRequest(@RequestHeader("X-Sharer-User-Id") Integer userId,
                                           @Valid @RequestBody ItemRequestRequest itemRequestRequest, BindingResult bindingResult) {
         log.info("Получен POST запрос на добавление нового запроса на товар");
-        return requestService.addRequest(userId, itemRequestRequest, bindingResult);
+        Validation.validation(bindingResult);
+        return requestService.addRequest(userId, itemRequestRequest);
     }
 
     @GetMapping("/{requestId}")

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingResponse;
 import ru.practicum.shareit.booking.service.BookingService;
+import ru.practicum.shareit.util.Validation;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -26,7 +27,8 @@ public class BookingController {
     public BookingResponse addBooking(@RequestHeader("X-Sharer-User-Id") Integer userId,
                                       @Valid @RequestBody BookingDto bookingDto, BindingResult bindingResult) {
         log.info("Получен POST запрос на добавление нового бронирования");
-        return bookingService.addBooking(userId, bookingDto, bindingResult);
+        Validation.validation(bindingResult);
+        return bookingService.addBooking(userId, bookingDto);
     }
 
     @PatchMapping("{bookingId}")

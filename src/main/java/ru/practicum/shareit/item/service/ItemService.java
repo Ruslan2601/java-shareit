@@ -6,7 +6,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BindingResult;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.enums.Status;
@@ -19,7 +18,6 @@ import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.item.util.ItemValidation;
 import ru.practicum.shareit.request.repository.RequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
@@ -45,8 +43,7 @@ public class ItemService {
     private final RequestRepository requestRepository;
 
     @Transactional
-    public ItemResponse addItem(Integer userId, ItemDto itemDto, BindingResult bindingResult) {
-        ItemValidation.validation(bindingResult);
+    public ItemResponse addItem(Integer userId, ItemDto itemDto) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ObjectNotFoundException("Пользователя с такими id нет"));
         Item item = mapper.toItem(itemDto);
         item.setOwner(user);

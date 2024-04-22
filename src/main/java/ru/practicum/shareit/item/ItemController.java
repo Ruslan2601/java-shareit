@@ -7,6 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.service.ItemService;
+import ru.practicum.shareit.util.Validation;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
@@ -25,7 +26,8 @@ public class ItemController {
     public ItemResponse addItem(@RequestHeader("X-Sharer-User-Id") Integer userId,
                                 @Valid @RequestBody ItemDto itemDto, BindingResult bindingResult) {
         log.info("Получен POST запрос на добавление нового товара");
-        return itemService.addItem(userId, itemDto, bindingResult);
+        Validation.validation(bindingResult);
+        return itemService.addItem(userId, itemDto);
     }
 
     @PatchMapping("/{id}")
@@ -66,7 +68,7 @@ public class ItemController {
     public CommentResponse addComment(@RequestHeader("X-Sharer-User-Id") Integer userId,
                                       @RequestBody CommentDto commentDto,
                                       @PathVariable("itemId") Integer itemId) {
-        log.info("Получен POST запрос на добавление нового коментария");
+        log.info("Получен POST запрос на добавление нового комментария");
         return itemService.addComment(userId, commentDto, itemId);
     }
 }
