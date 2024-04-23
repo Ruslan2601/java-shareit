@@ -8,6 +8,7 @@ import ru.practicum.shareit.user.dto.UserCreate;
 import ru.practicum.shareit.user.dto.UserResponse;
 import ru.practicum.shareit.user.dto.UserUpdate;
 import ru.practicum.shareit.user.service.UserService;
+import ru.practicum.shareit.util.Validation;
 
 import javax.validation.Valid;
 import java.util.Collection;
@@ -29,14 +30,16 @@ public class UserController {
     @PostMapping
     public UserResponse addUser(@Valid @RequestBody UserCreate user, BindingResult bindingResult) {
         log.info("Получен POST запрос на добавление нового пользователя");
-        return userService.addUser(user, bindingResult);
+        Validation.validation(bindingResult);
+        return userService.addUser(user);
     }
 
     @PatchMapping("/{id}")
     public UserResponse updateUser(@Valid @RequestBody UserUpdate user, @PathVariable("id") Integer userId,
                                            BindingResult bindingResult) {
         log.info("Получен Patch запрос на обновление пользователя");
-        return userService.updateUser(user, userId, bindingResult);
+        Validation.validation(bindingResult);
+        return userService.updateUser(user, userId);
     }
 
     @GetMapping("/{id}")

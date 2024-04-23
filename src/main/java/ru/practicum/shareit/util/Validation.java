@@ -1,4 +1,4 @@
-package ru.practicum.shareit.booking.util;
+package ru.practicum.shareit.util;
 
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -6,7 +6,7 @@ import ru.practicum.shareit.exception.ValidationException;
 
 import java.util.List;
 
-public class BookingValidation {
+public class Validation {
     public static void validation(BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             StringBuilder errorMsg = new StringBuilder();
@@ -17,6 +17,5 @@ public class BookingValidation {
             }
             throw new ValidationException(errorMsg.toString());
         }
-
     }
 }

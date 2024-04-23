@@ -2,13 +2,14 @@ package ru.practicum.shareit.item.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import ru.practicum.shareit.request.model.ItemRequest;
+import lombok.NoArgsConstructor;
 import ru.practicum.shareit.user.dto.UserCreate;
 
 import java.util.List;
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 public class ItemResponse {
 
     private int id;
@@ -25,7 +26,7 @@ public class ItemResponse {
 
     private ItemBooking nextBooking;
 
-    private ItemRequest request;
+    private int requestId;
 
     private List<CommentResponse> comments;
 }
