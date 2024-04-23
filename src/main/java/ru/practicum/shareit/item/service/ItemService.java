@@ -96,8 +96,20 @@ public class ItemService {
 
     public Collection<ItemResponse> getAllItems(Integer userId, int from, int size) {
         Pageable unsortedPageable = PageRequest.of(from / size, size);
+        List<Comment> commentList = commentRepository.findAll();
         log.info("Отображен список всех товаров пользователя");
-        return itemRepository.findByOwnerId(userId, unsortedPageable).stream().map(x -> getItem(x.getId(), userId)).collect(Collectors.toList());
+        return itemRepository.findByOwnerId(userId, unsortedPageable)
+                .stream()
+                .map(mapper::toItemResponse)
+                .peek(itemResponse -> addLastAndNextBooking(itemResponse, userId))
+                .peek(itemResponse -> {
+                    List<CommentResponse> commentResponseList = commentList.stream()
+                            .filter(comment -> comment.getItem().getId() == itemResponse.getId())
+                            .map(commentMapper::toCommentResponse)
+                            .collect(Collectors.toList());
+                    itemResponse.setComments(commentResponseList);
+                })
+                .collect(Collectors.toList());
     }
 
     public Collection<ItemResponse> search(String text, int from, int size) {

@@ -108,11 +108,8 @@ class ItemServiceTest {
         item.setOwner(user);
         ItemResponse itemResponse = new ItemResponse();
 
-        when(repository.findById(anyInt())).thenReturn(Optional.of(item));
-        when(userRepository.findById(anyInt())).thenReturn(Optional.of(user));
         when(repository.findByOwnerId(anyInt(), any(Pageable.class))).thenReturn(List.of(item, item, item));
         when(mapper.toItemResponse(item)).thenReturn(itemResponse);
-        when(commentRepository.findByItemId(anyInt())).thenReturn(List.of());
         when(bookingRepository.findFirstByItemIdAndItemOwnerIdAndStartBeforeAndStatusOrderByStartDesc(anyInt(), anyInt(), any(LocalDateTime.class), any(Status.class)))
                 .thenReturn(null);
         when(bookingRepository.findFirstByItemIdAndItemOwnerIdAndStartAfterAndStatusOrderByStartAsc(anyInt(), anyInt(), any(LocalDateTime.class), any(Status.class)))
@@ -124,17 +121,6 @@ class ItemServiceTest {
         assertEquals(itemResponse, itemResponses.get(0));
         assertEquals(itemResponse, itemResponses.get(1));
         assertEquals(itemResponse, itemResponses.get(2));
-    }
-
-    @Test
-    void getAllItems_whenUserNotFound() {
-        Item item = new Item();
-
-        when(repository.findById(anyInt())).thenReturn(Optional.of(item));
-        when(userRepository.findById(anyInt())).thenReturn(Optional.empty());
-        when(repository.findByOwnerId(anyInt(), any(Pageable.class))).thenReturn(List.of(item, item, item));
-
-        assertThrows(ObjectNotFoundException.class, () -> service.getAllItems(1, 1, 1));
     }
 
     @Test
