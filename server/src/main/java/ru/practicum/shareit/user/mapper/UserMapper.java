@@ -11,12 +11,6 @@ public interface UserMapper {
 
     User toUser(UserCreate userCreate);
 
-    UserCreate toUserCreate(User user);
-
-    User toUser(UserUpdate userCreate);
-
-    UserCreate toUserUpdate(User user);
-
     User toUser(UserResponse userResponse);
 
     UserResponse toUserResponse(User user);
