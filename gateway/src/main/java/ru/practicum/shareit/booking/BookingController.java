@@ -26,14 +26,14 @@ public class BookingController {
 
     @GetMapping
     public ResponseEntity<Object> getBookingList(@RequestHeader("X-Sharer-User-Id") Integer userId,
-                                                 @RequestParam(defaultValue = "ALL") String stateParam,
+                                                 @RequestParam(name = "state", defaultValue = "ALL") String stateString,
                                                  @RequestParam(defaultValue = "0")
                                                  @Min(value = 0, message = "from должно быть больше или равно 0") int from,
                                                  @RequestParam(defaultValue = "10")
                                                  @Min(value = 1, message = "size должно быть больше 0") int size) {
         log.info("Получен GET запрос на получение данных о бронировании текущего пользователя");
-        BookingState state = BookingState.from(stateParam)
-                .orElseThrow(() -> new IllegalArgumentException("Unknown state: " + stateParam));
+        BookingState state = BookingState.from(stateString)
+                .orElseThrow(() -> new IllegalArgumentException("Unknown state: " + stateString));
         return bookingClient.getBookings(userId, state, from, size);
     }
 
@@ -54,22 +54,22 @@ public class BookingController {
 
     @PatchMapping("{bookingId}")
     public ResponseEntity<Object> updateStatus(@RequestHeader("X-Sharer-User-Id") Integer userId,
-                                        @PathVariable("bookingId") Integer bookingId,
-                                        @RequestParam("approved") Boolean isApprove) {
+                                               @PathVariable("bookingId") Integer bookingId,
+                                               @RequestParam("approved") Boolean isApprove) {
         log.info("Получен PATCH запрос на подтверждение бронирования");
         return bookingClient.approveBooking(userId, bookingId, isApprove);
     }
 
     @GetMapping("/owner")
     public ResponseEntity<Object> getBookingListByItemOwner(@RequestHeader("X-Sharer-User-Id") Integer userId,
-                                                           @RequestParam(defaultValue = "ALL") String stateParam,
-                                                           @RequestParam(defaultValue = "0")
-                                                           @Min(value = 0, message = "from должно быть больше или равно 0") int from,
-                                                           @RequestParam(defaultValue = "10")
-                                                           @Min(value = 1, message = "size должно быть больше 0") int size) {
+                                                            @RequestParam(name = "state", defaultValue = "ALL") String stateString,
+                                                            @RequestParam(defaultValue = "0")
+                                                            @Min(value = 0, message = "from должно быть больше или равно 0") int from,
+                                                            @RequestParam(defaultValue = "10")
+                                                            @Min(value = 1, message = "size должно быть больше 0") int size) {
         log.info("Получен GET запрос на получение списка бронирований для всех вещей текущего пользователя");
-        BookingState state = BookingState.from(stateParam)
-                .orElseThrow(() -> new IllegalArgumentException("Unknown state: " + stateParam));
+        BookingState state = BookingState.from(stateString)
+                .orElseThrow(() -> new IllegalArgumentException("Unknown state: " + stateString));
         return bookingClient.getOwnerBookings(userId, state, from, size);
     }
 }
