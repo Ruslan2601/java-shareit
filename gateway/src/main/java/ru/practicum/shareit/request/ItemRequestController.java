@@ -31,7 +31,7 @@ public class ItemRequestController {
 
     @GetMapping("/{requestId}")
     public ResponseEntity<Object> getRequest(@PathVariable("requestId") Integer requestId,
-                                          @RequestHeader("X-Sharer-User-Id") Integer userId) {
+                                             @RequestHeader("X-Sharer-User-Id") Integer userId) {
         log.info("Получен GET запрос на получение запроса на товар");
         return itemRequestClient.getRequest(userId, requestId);
     }
@@ -44,10 +44,10 @@ public class ItemRequestController {
 
     @GetMapping("/all")
     public ResponseEntity<Object> getAllRequestsWithPagination(@RequestHeader("X-Sharer-User-Id") Integer userId,
-                                                                  @RequestParam(defaultValue = "0")
-                                                                  @Min(value = 0, message = "from должно быть больше или равно 0") int from,
-                                                                  @RequestParam(defaultValue = "10")
-                                                                  @Min(value = 1, message = "size должно быть больше 0") int size) {
+                                                               @RequestParam(defaultValue = "0")
+                                                               @Min(value = 0, message = "from должно быть больше или равно 0") int from,
+                                                               @RequestParam(defaultValue = "10")
+                                                               @Min(value = 1, message = "size должно быть больше 0") int size) {
         log.info("Получен GET запрос на получение списка запросов на товар с постраничным выводом");
         return itemRequestClient.getAllRequestsWithPagination(userId, from, size);
     }
