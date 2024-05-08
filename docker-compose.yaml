@@ -10,6 +10,7 @@ services:
       - server
     environment:
       - SHAREIT_SERVER_URL=http://server:9090
+      - TZ=Europe/Moscow
 
   server:
     build: server
@@ -23,6 +24,7 @@ services:
       - DATASOURCE_URL=jdbc:postgresql://db:5432/shareit
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+      - TZ=Europe/Moscow
 
   db:
     image: postgres:16.1-alpine
@@ -33,3 +35,4 @@ services:
       - POSTGRES_DB=shareit
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+      - TZ=Europe/Moscow
