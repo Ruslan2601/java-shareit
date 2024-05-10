@@ -13,6 +13,8 @@ import ru.practicum.shareit.util.Validation;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import java.util.Collections;
+import java.util.List;
 
 @Slf4j
 @Validated
@@ -63,6 +65,10 @@ public class ItemController {
                                          @RequestParam(defaultValue = "10")
                                          @Min(value = 1, message = "size должно быть больше 0") int size) {
         log.info("Получен GET запрос на получение всех товаров по названию");
+        if (text.isEmpty()) {
+            List<Object> emptyList = Collections.emptyList();
+            return ResponseEntity.ok(emptyList);
+        }
         return itemClient.search(userId, text, from, size);
     }
 
