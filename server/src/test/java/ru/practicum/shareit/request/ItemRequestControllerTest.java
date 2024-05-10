@@ -129,19 +129,4 @@ class ItemRequestControllerTest {
                         is(response.getCreated().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))));
     }
 
-    @SneakyThrows
-    @Test
-    void getAllRequestsWithPagination_WrongSize() {
-        when(requestService.getAllRequestsWithPagination(any(Integer.class), any(Integer.class), any(Integer.class)))
-                .thenReturn(List.of(response));
-
-        mvc.perform(get("/requests/all?from=0&size=-20")
-                .content(objectMapper.writeValueAsString(request))
-                .characterEncoding(StandardCharsets.UTF_8)
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .header("X-Sharer-User-Id", 1))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error").value("getAllRequestsWithPagination.size: size должно быть больше 0"));
-    }
 }
