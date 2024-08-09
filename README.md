@@ -1,4 +1,4 @@
-# Проект `ShareIt`
+# Проект `BookingIt`
 ### Проект, созданный в рамках изучения Spring Data JPA, Docker, Hibernate, Mock и Spring Boot тестирования
 ### Service database
 ![](server/src/main/resources/schemaDB.png)
